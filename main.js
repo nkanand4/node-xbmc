@@ -9,13 +9,9 @@ xbmcApi = new Xbmc.XbmcApi;
 xbmcApi.setConnection(connection);
 
 xbmcApi.on('connection:open', function()  {
-    if(true /* command is OSD*/) {
-        xbmcApi.player.GetActivePlayers(function(data) {
-            if(data.result.length === 0) {
-                xbmcApi.input.ContextMenu();
-            }
-        });
-    }
+    xbmcApi.application.IncreaseVolume(function(data) {
+        console.log('Volume increased', data);
+    });
 });
 
 xbmcApi.on('connection:data', function(data)  {

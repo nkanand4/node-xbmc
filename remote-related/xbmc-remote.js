@@ -2,6 +2,9 @@ var Xbmc = require('./node-xbmc');
 var xbmcApi;
 var connection;
 var queue = [];
+var specials = {
+	'ShowOSD': 'Input.ContextMenu'
+};
 
 function CQ() {
 	var self = this;
@@ -41,22 +44,32 @@ function CQ() {
   			});
 		}
 	}
+	this.identifyCommand = function(command) {
+		var temp = queue[0].split('.');
+		var category = temp[0].toLowerCase();
+		var name = temp[1];
+		return {
+			category: category,
+			name: name
+		};
+	}
 	this.fire = function() {
-    		//console.log('onOpen');
+    		var command;
     		while(queue.length > 0) {
-			var category = queue[0].split('.')[0].toLowerCase();
-      			var name = queue[0].split('.')[1];
-      			console.log('Doing', name, 'on', category);
+				command = this.identifyCommand(queue[0]);
+      			console.log('Doing', command.name, 'on', command.category);
       			queue.shift();
-      			if (xbmcApi[category][name] != null) {
-        			if(name === 'ShowOSD') {
+      			if (xbmcApi[command.category][command.name] != null) {
+        			if(command.name in specials) {
         				xbmcApi.player.GetActivePlayers(function(data) {
-            					if(data.result.length === 0) {
-                					xbmcApi.input.ContextMenu();
-            					}
+        					var command;
+        					if(data.result.length === 0) {
+            					command = self.identifyCommand(specials[command.name]);
+            					xbmcApi[command.category][command.name]();
+        					}
         				});
     				}
-				xbmcApi[category][name]();
+				xbmcApi[command.category][command.name]();
       			} else {
         			console.log(category + "." + name + " does not exists");
       			}
