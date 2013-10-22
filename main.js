@@ -1,7 +1,8 @@
+var config = require('./host');
 var Xbmc = require('./index');
 var xbmcApi, connection;
 connection = new Xbmc.TCPConnection({
-        host: '192.168.1.5',
+        host: config.host,
         port: 9090,
         verbose: true
     });
