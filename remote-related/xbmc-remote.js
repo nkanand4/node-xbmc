@@ -4,7 +4,15 @@ var xbmcApi;
 var connection;
 var queue = [];
 var specials = {
-    'ShowOSD' : 'Input.ContextMenu'
+    'ShowOSD' : {
+    	'noplayer': 'Input.ContextMenu'
+    },
+    'Up': {
+    	'player': 'Application.IncreaseVolume'
+    },
+    'Up': {
+    	'player': 'Application.ReduceVolume'
+    }
 };
 
 function CQ() {
@@ -70,9 +78,10 @@ function CQ() {
                 if (command.name in specials) {
                     xbmcApi.player
                             .GetActivePlayers(function(data) {
-                                var specialCommand;
-                                if (data.result.length === 0) {
-                                    specialCommand = self.identifyCommand(specials[command.name]);
+                                var specialCommand
+                                	condition = data.result.length === 0 ? 'noplayer' : 'player';
+                                if (specials[command.name][condition]) {
+                                    specialCommand = self.identifyCommand(specials[command.name][condition]);
                                     xbmcApi[specialCommand.category][specialCommand.name]();
                                 }
                             });
