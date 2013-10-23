@@ -10,7 +10,7 @@ var specials = {
     'Up': {
     	'player': 'Application.IncreaseVolume'
     },
-    'Up': {
+    'Down': {
     	'player': 'Application.ReduceVolume'
     }
 };
@@ -37,7 +37,7 @@ function CQ() {
         });
     };
     this.changeDefaults = function(xbmcApi) {
-        xbmcApi.application.defaults.stepVol = 70;
+        xbmcApi.application.defaults.stepVol = 10;
         return xbmcApi;
     };
     this.add = function(cmd) {
@@ -80,9 +80,9 @@ function CQ() {
                             .GetActivePlayers(function(data) {
                                 var specialCommand
                                 	condition = data.result.length === 0 ? 'noplayer' : 'player';
+                                	console.log('Got specials one for ', condition);
                                 if (specials[command.name][condition]) {
-                                    specialCommand = self.identifyCommand(specials[command.name][condition]);
-                                    xbmcApi[specialCommand.category][specialCommand.name]();
+                                	self.add(specials[command.name][condition]);
                                 }
                             });
                 }
